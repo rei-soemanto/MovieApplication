@@ -29,10 +29,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.example.movieapplication.data.container.MovieServerContainer
 import com.example.movieapplication.ui.model.DummyMovieData
 import com.example.movieapplication.ui.model.Movie
 
@@ -57,8 +61,11 @@ fun MovieCard(
                .padding(6.dp)
         ){
             Box {
-                Image(
-                    painter = painterResource(id = movie.posterResId),
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(MovieServerContainer.BASE_IMG_URL + movie.posterPath)
+                        .crossfade(true)
+                        .build(),
                     contentDescription = movie.title,
                     modifier = Modifier
                         .width(100.dp)

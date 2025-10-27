@@ -11,9 +11,9 @@ import kotlin.jvm.java
 
 class MovieServerContainer {
     companion object{
-        val BASE_IMG_URL = ""
-        val BASE_URL = ""
-        val ACCESS_TOKEN = ""
+        val BASE_IMG_URL = "http://27.112.77.56:8015/media/posters/"
+        val BASE_URL = "http://27.112.77.56:8015/"
+        var ACCESS_TOKEN = ""
     }
 
     private val client = OkHttpClient.Builder()

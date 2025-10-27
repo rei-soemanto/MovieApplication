@@ -1,5 +1,6 @@
 package com.example.movieapplication.ui.view
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,9 +31,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.movieapplication.ui.route.AppView
+import com.example.movieapplication.ui.viewmodel.LoginViewModel
 
 @Composable
-fun LoginView(){
+fun LoginView(
+    viewModel: LoginViewModel = viewModel(),
+    modifier: Modifier = Modifier,
+    navController: NavController = rememberNavController()
+){
 
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
@@ -86,7 +96,13 @@ fun LoginView(){
         )
 
         Button(
-            onClick = { showDialog = true },
+            onClick = {
+                viewModel.submit(email, password, navController){ token ->
+                    if (token.isEmpty()) {
+                        showDialog = true
+                    }
+                }
+            },
             enabled = formValid,
             modifier = Modifier
                 .fillMaxWidth()
@@ -104,7 +120,10 @@ fun LoginView(){
             },
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(top = 24.dp),
+                .padding(top = 24.dp)
+                .clickable {
+                    navController.navigate(AppView.Register.name)
+                },
             textAlign = TextAlign.Center
         )
     }

@@ -25,6 +25,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.movieapplication.data.container.MovieServerContainer
 import com.example.movieapplication.ui.view.AddMovieView
 import com.example.movieapplication.ui.view.LoginView
 import com.example.movieapplication.ui.view.MovieDetailView
@@ -130,7 +131,11 @@ fun AppRouting(){
             startDestination = AppView.MovieList.name
         ){
             composable(route = AppView.MovieList.name){
-                MovieListView(navController = navController)
+                if (MovieServerContainer.ACCESS_TOKEN.isEmpty()){
+                    navController.navigate(AppView.Login.name)
+                } else {
+                    MovieListView(navController = navController)
+                }
             }
 
             composable(route = AppView.AddMovie.name){
@@ -138,15 +143,15 @@ fun AppRouting(){
             }
 
             composable(route = AppView.Login.name){
-                LoginView()
+                LoginView(navController = navController)
             }
 
             composable(route = AppView.Register.name){
-                RegisterView()
+                RegisterView(navController = navController)
             }
 
-            composable(route = AppView.MovieDetail.name + "/{title}"){ backStackEntry ->
-                MovieDetailView(title = backStackEntry.arguments?.getString("title")!!)
+            composable(route = AppView.MovieDetail.name + "/{id}"){ backStackEntry ->
+                MovieDetailView(id = backStackEntry.arguments?.getString("id")!!.toInt())
             }
         }
     }

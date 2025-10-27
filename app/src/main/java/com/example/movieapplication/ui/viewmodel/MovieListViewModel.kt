@@ -1,10 +1,13 @@
 package com.example.movieapplication.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.example.movieapplication.ui.model.DummyMovieData
+import androidx.lifecycle.viewModelScope
+import com.example.movieapplication.data.container.MovieServerContainer
+import com.example.movieapplication.data.repository.MovieServerRepositories
 import com.example.movieapplication.ui.model.Movie
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 class MovieListViewModel: ViewModel() {
     private val _movies = MutableStateFlow<List<Movie>>(emptyList())
@@ -15,19 +18,20 @@ class MovieListViewModel: ViewModel() {
     }
 
     fun loadMovies() {
-        _movies.value = DummyMovieData.movies.toList()
+//        _movies.value = DummyMovieData.movies.toList()
+        viewModelScope.launch {
+            _movies.value = MovieServerContainer().movieServerRepository.getAllMovies().toList()
+        }
     }
 
     fun toggleIsLiked(movie: Movie) {
-        val index = DummyMovieData.movies.indexOfFirst { it.title == movie.title && it.releaseYear == movie.releaseYear }
-        if (index == -1) return
-
-        val updated = DummyMovieData.movies[index].copy(
-            isLiked = !DummyMovieData.movies[index].isLiked
-        )
-        DummyMovieData.movies[index] = updated
-
-        _movies.value = DummyMovieData.movies.toList()
-
+        viewModelScope.launch {
+            if (movie.isLiked){
+                MovieServerContainer().movieServerRepository.UnlikeMovie(movie.id)
+            }else{
+                MovieServerContainer().movieServerRepository.LikeMovie(movie.id)
+            }
+            loadMovies()
+        }
     }
 }

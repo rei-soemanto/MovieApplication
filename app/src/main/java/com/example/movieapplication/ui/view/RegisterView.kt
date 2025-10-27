@@ -26,9 +26,17 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.movieapplication.ui.viewmodel.RegisterViewModel
 
 @Composable
-fun RegisterView() {
+fun RegisterView(
+    viewModel: RegisterViewModel = viewModel(),
+    modifier: Modifier = Modifier,
+    navController: NavController = rememberNavController()
+) {
 
     var name by rememberSaveable { mutableStateOf("") }
     var email by rememberSaveable { mutableStateOf("") }
@@ -91,7 +99,13 @@ fun RegisterView() {
         )
 
         Button(
-            onClick = { showDialog = true },
+            onClick = {
+                viewModel.submit(name, email, password, navController){
+                    if (it.isEmpty()) {
+                        showDialog = true
+                    }
+                }
+            },
             enabled = formValid,
             modifier = Modifier
                 .fillMaxWidth()
@@ -104,8 +118,8 @@ fun RegisterView() {
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
-            title = { Text("Login Failed") },
-            text = { Text("Invalid email or password") },
+            title = { Text("Register Failed") },
+            text = { Text("Email already registered") },
             confirmButton = {
                 Button(onClick = { showDialog = false }) {Text("OK") }
             }
